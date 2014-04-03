@@ -19,7 +19,7 @@ assorted [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataTypes][types of d
 fall into assorted [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataCategories][categories]].
 
 ** [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#stations][Stations]]
-#:begin_src lisp
+#+begin_src lisp
 ;; Info for a single station.
 (fetch "stations/coop:190166")
 
@@ -31,7 +31,7 @@ fall into assorted [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataCategor
 
 ;; Note that the meta data reports the total number of stations.
 (pprint (fetch :stations :limit 1))
-#:end_src
+#+end_src
 There are more than 100 thousand stations.  Many of them are not
 currently active.  You can query information about a single station.
 And you can pull data for stations in a given region using various
@@ -39,30 +39,30 @@ schemes.  You can also filter to get stations that have the types of
 data that you need.  Apparently you can't filter stations with data
 for a given time interval.
 ** [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#locations][Locations]]
-#:begin_src lisp
+#+begin_src lisp
 (fetch "locations/ZIP:02476")
 (fetch "locations/FIPS:25")
 (assoc :metadata (fetch :locations :limit 1))
 (fetch :locations :locationcategoryid :ST  :limit 52)
 (fetch :locations :locationcategoryid :CITY :sortfield :name :sortorder :desc :offset 100 :limit 100)
-#:end_src
+#+end_src
 ** [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataTypes][Data Types]]
-#:begin_src lisp
+#+begin_src lisp
 (fetch :datatypes) First 25 of the set of ~1.5K data types
 (pprint (fetch :datatypes :stationid "GHCND:US1MAMD0007")) 11 types available
-#:end_src
+#+end_src
 ** [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#dataCategories][Data Categories]]
-#:begin_src lisp
+#+begin_src lisp
 (pprint (fetch :dataCategories :limit 100)) 41 categories
-#:end_src
+#+end_src
 ** [[http://www.ncdc.noaa.gov/cdo-web/webservices/v2#data][Actual Data]]
-#:begin_src lisp
+#+begin_src lisp
 (fetch :data :datasetid :ghcnd :locationid  "fips:02"
          :startdate "2010-05-01" :enddate "2010-05-31")
 (fetch '(:data ("datasetid" . "GHCND") ("locationid" . "FIPS:02")
         ("startdate" . "2010-05-01") ("enddate" . "2010-05-31")
         ("datatypeid" . "prcp") ("datatypeid" . "SNWD")))
-#:end_src
+#+end_src
 * Notes
 The API can be slow, sometimes quite slow.  The data provided by this
 API is reasonably static, so memoizing or caching the fetch routine
@@ -70,10 +70,10 @@ might help with that.
 
 The API doesn't report errors very well.  Sometimes it ignore
 parameters you have passed.  This is bogus:
-#:begin_src lisp
+#+begin_src lisp
 (equal (fetch :stations :limit 1 :maxdate "2014-03-28")
        (fetch :stations :limit 1 ))
 --> T
-#:end_src
+#+end_src
 And sometimes it just returns an empty result when your query
 is malformed.
