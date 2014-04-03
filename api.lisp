@@ -27,26 +27,20 @@
 (defvar *last-query-result*)
 (defvar *raw-last-query-result*)
 
-(defun fetch (&rest query)
+(defun fetch (domain &rest query-plist)
   (setup-auth-if-necessary)
-  (setf *last-got*
-        (list* (car query)
+  (setf *last-got*p
+        (list* domain
                (loop
-                  for (key value) on (rest query) by #'cddr
+                  for (key value) on query-plist by #'cddr
                   collect (cons (string-downcase (symbol-name key)) 
                                 (format nil "~A" value)))))
   (setf *last-query-url*
-        (format nil "http://www.ncdc.noaa.gov/cdo-web/api/v2/~(~A~)" (car *last-got*)))
+        (format nil "http://www.ncdc.noaa.gov/cdo-web/api/v2/~(~A~)" domain))
   (setf *last-query-result*
         (cl-json:decode-json-from-string
-         (setf *raw-last-query-result*
-               (coerce
-                (loop
-                   with raw-result-bytes 
-                     = (drakma:http-request *last-query-url*
-                                            :parameters (rest *last-got*)
-                                            :additional-headers *extra-headers*)
-                   for byte across raw-result-bytes
-                   collect (code-char byte)) 
-                'string)))))
+         (let ((drakma:*text-content-types* '(("application" . "json"))))
+           (drakma:http-request *last-query-url*
+                                :parameters (rest *last-got*)
+                                :additional-headers *extra-headers*)))))
 
