@@ -1,10 +1,10 @@
-(defpackage #:cbo-web-examples
-  (:use #:common-lisp #:cbo-web
+(defpackage #:cdo-web-examples
+  (:use #:common-lisp
         #:optima #:optima.ppcre #:optima.extra
         #:editor-hints.named-readtables
         #:zipcode-distance-api))
 
-(in-package #:cbo-web-examples)
+(in-package #:cdo-web-examples)
 
 (in-readtable :fare-quasiquote)
 
@@ -19,7 +19,7 @@
      (let* ((w (/ width 2))
             (extent (format nil "~G,~G,~G,~G" (- lat w)(- lng w)(+ lat w)(+ lng w)))
             (type (loop for k in types nconc `(:datatypeid ,k))))
-       (ematch (apply #'fetch :stations :extent extent types)
+       (ematch (apply #'cdo-web:fetch :stations :extent extent types)
            ((alist (:results . stations))
             (loop for s in stations
                when (match s ((alist (:maxdate . (ppcre "^2014"))) t)) collect s)))))))
@@ -28,7 +28,7 @@
   (ematch (zipcode-info zipcode)
     ((alist (:lat . lat) (:lng . lng))
      (let* ((w 1))
-       (ematch (fetch `(stations
+       (ematch (cdo-web:fetch `(stations
                         ("limit" . "500")
                         ("datatypeid" . "EMNT")
                         ("datatypeid" . "EMXT")
