@@ -1,13 +1,10 @@
 (in-package #:common-lisp-user)
 
-(defpackage #:cdo-web
-  (:use #:common-lisp #:optima #:optima.ppcre #:optima.extra
-        #:editor-hints.named-readtables
-        #:zipcode-distance-api))
+(defpackage #:cdo-web 
+  (:use #:common-lisp)
+  (:export #:fetch))
 
 (in-package #:cdo-web)
-
-(in-readtable :fare-quasiquote)
 
 ;;;; Auth is done with a header.
 
